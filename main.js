@@ -1,14 +1,16 @@
-const userProfile = {};
+const car = {};
 
-userProfile.username = 'developer123';
-userProfile.email = 'dev@example.com';
-userProfile.age = 25;
-userProfile.isLoggedIn = true;
+car.brand = 'Toyota';
+car.model = 'Camry';
+car.year = 2021;
+car.isEngineOn = false;
 
-console.log(userProfile.email);
+car.startEngine = function() {
+    this.isEngineOn = true;
+    console.log(`Двигатель ${this.brand} ${this.model} запущен.`);
+};
 
-userProfile.age = 26;
-
-userProfile['user location'] = 'New York';
-
-console.log(userProfile['user location']);
+car.stopEngine = function() {
+    this.isEngineOn = false;
+    console.log(`Двигатель ${this.brand} ${this.model} заглушен.`);
+};
