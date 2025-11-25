@@ -1,16 +1,16 @@
-const car = {};
-
-car.brand = 'Toyota';
-car.model = 'Camry';
-car.year = 2021;
-car.isEngineOn = false;
-
-car.startEngine = function() {
-    this.isEngineOn = true;
-    console.log(`Двигатель ${this.brand} ${this.model} запущен.`);
+const salaries = {
+    ivan: 1200,
+    maria: 1500,
+    petr: 1100,
+    anna: 1600
 };
 
-car.stopEngine = function() {
-    this.isEngineOn = false;
-    console.log(`Двигатель ${this.brand} ${this.model} заглушен.`);
-};
+let totalSum = 0;
+
+for (const key in salaries) {
+    if (salaries.hasOwnProperty(key)) {
+        totalSum += salaries[key];
+    }
+}
+
+console.log(totalSum);
