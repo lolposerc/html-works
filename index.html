@@ -7,6 +7,56 @@
     <title>Document</title>
 </head>
 <body>
-    
+    <div id="task1">
+        <h2>Задание 1: Работа с текстом</h2>
+        <p id="text-element">Исходный текст этого параграфа</p>
+        <button onclick="changeText()">Изменить текст</button>
+        <button onclick="addText()">Добавить текст</button>
+        <button onclick="resetText()">Сбросить текст</button>
+    </div>
+    <div id="task2">
+        <h2>Задание 2: Безопасность</h2>
+        <div id="safe-output">Безопасная зона:</div>
+        <div id="unsafe-output">Небезопасная зона:</div>
+        <input type="text" id="user-input" placeholder="Введите любой текст">
+        <button onclick="safeOutput()">Безопасный вывод</button>
+        <button onclick="unsafeOutput()">Небезопасный вывод</button>
+    </div>
+    <div id="task3">
+        <h2>Задание 3: Динамический контент</h2>
+        <div id="dynamic-content">
+            <p>Существующий контент</p>
+        </div>
+        <button onclick="addSimpleContent()">Добавить простой текст</button>
+        <button onclick="addHTMLContent()">Добавить HTML</button>
+        <button onclick="clearContent()">Очистить</button>
+    </div>
+    <div id="task4">
+        <h2>Задание 4: Управление стилями</h2>
+        <div id="style-demo" style="padding: 20px; border: 1px solid black;">
+            Этот блок будет менять стили
+        </div>
+        <button onclick="changeColor()">Изменить цвет</button>
+        <button onclick="changeSize()">Изменить размер</button>
+        <button onclick="addBorder()">Добавить границу</button>
+        <button onclick="resetStyles()">Сбросить стили</button>
+    </div>
+    <div id="task5">
+        <h2>Задание 5: Профиль пользователя</h2>
+        <div id="user-profile">
+            <h3 id="user-name">Иван Иванов</h3>
+            <p id="user-title">Студент</p>
+            <div id="user-bio">Люблю изучать JavaScript</div>
+        </div>
+        <input type="text" id="name-input" placeholder="Новое имя">
+        <button onclick="updateName()">Обновить имя</button>
+        <input type="text" id="title-input" placeholder="Новая должность">
+        <button onclick="updateTitle()">Обновить должность</button>
+        <textarea id="bio-input" placeholder="Новое описание"></textarea>
+        <button onclick="updateBio()">Обновить описание</button>
+        <button onclick="highlightProfile()">Подсветить профиль</button>
+        <button onclick="resetProfile()">Сбросить профиль</button>
+    </div>
+
 </body>
 </html>
