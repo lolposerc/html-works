@@ -1,39 +1,58 @@
-def StudentGrades():
-    grades = []
+def TextAnalyze(text=str):
+    print()
+    print("="*40)
 
-    for index in range(0,5):
+    charsLen = len(text)
+    words = str.split(text)
+
+    if len(words) == 0:
+        print("Вы ничего не вводили!")
         print("="*40)
-        grade = float(input(f"Введите {index+1} оценку:"))
-        grades.append(grade)
+        print()
+        TextAnalyze(input("Напишите текст который надо Проанализировать: "))
+        return
     
-    print("="*40)
-    print(f"Оценки: {grades}")
+    sentences = 0
 
-    for grade in grades:
-        if grade > 100 and grade < 100:
-            print(f"тудент не может сдать на оценку: '{grade}' (0-100)")
-            return
+    longer = ""
+    smaller = ""
+
+    letters = 0
+    uppercases = 0
+
+    uniqueWords = []
+
+    for word in words:
+        wordLower = word.lower()
+        if wordLower not in uniqueWords:
+            uniqueWords.append(wordLower)
+        
+        if len(word) > len(longer):
+            longer = word
+        if smaller == "":
+            smaller = word
+        else:
+            if len(word) < len(smaller):
+                smaller = word
+
+    for char in text:
+        if char.isalpha():
+            letters += 1
+            if char.isupper():
+                uppercases += 1
+        if char in "!?.":
+            sentences += 1
     
-    MiddleGrade = sum(grades) / len(grades)
+    uppercase = (uppercases / letters) * 100
+
+    print()
+    print(f"Общее количество символов: {charsLen}")
+    print(f"Общее количество слов: {len(words)}")
+    print(f"Общее количество предложений: {sentences}")
+    print(f"Самое длинное слово: '{longer}' , Самое короткое: '{smaller}'.")
+    print(f"Процент заглавных букв: {int(uppercase)}%")
+    print(f"Уникальные слова: {uniqueWords}")
+    print()
     print("="*40)
-    print(f"Средняя оценка: {MiddleGrade}")
-    print("")
-    if MiddleGrade >= 90:
-        print("Студент сдал на отлично!")
-    elif MiddleGrade >= 80 and MiddleGrade <= 89:
-        print("Студент сдал на хорошо!")
-    elif MiddleGrade >= 70 and MiddleGrade <= 79:
-        print("Студент сдал на удовлетворительно!")
-    elif MiddleGrade >= 60 and MiddleGrade <= 69:
-        print("Студент сдал на ниже среднего!")
-    elif MiddleGrade <= 59:
-        print("Студент сдал на неудовлетворительно!")
-    print("")
-    if MiddleGrade >= 79:
-        print("Студент сдал!")
-    else:
-        print("Студент не сдал!")
-    print("")
-    print(f"Самая низкая оценка: {min(grades)}, Самая высокая: {max(grades)}")
-    print("="*40)
-StudentGrades()
+
+TextAnalyze(input("Напишите текст который надо Проанализировать: "))
