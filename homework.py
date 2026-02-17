@@ -1,58 +1,40 @@
-def TextAnalyze(text=str):
+student1 = ("Иван", "Иванов", 85, 92)
+student2 = ("Мария", "Петрова", 78, 88)
+student3 = ("Алексей", "Сидоров", 95, 90)
+
+Students = (student1,student2,student3)
+
+SmartStudent = [0,""]
+
+for student in Students:
     print()
     print("="*40)
-
-    charsLen = len(text)
-    words = str.split(text)
-
-    if len(words) == 0:
-        print("Вы ничего не вводили!")
-        print("="*40)
-        print()
-        TextAnalyze(input("Напишите текст который надо Проанализировать: "))
-        return
-    
-    sentences = 0
-
-    longer = ""
-    smaller = ""
-
-    letters = 0
-    uppercases = 0
-
-    uniqueWords = []
-
-    for word in words:
-        wordLower = word.lower()
-        if wordLower not in uniqueWords:
-            uniqueWords.append(wordLower)
-        
-        if len(word) > len(longer):
-            longer = word
-        if smaller == "":
-            smaller = word
-        else:
-            if len(word) < len(smaller):
-                smaller = word
-
-    for char in text:
-        if char.isalpha():
-            letters += 1
-            if char.isupper():
-                uppercases += 1
-        if char in "!?.":
-            sentences += 1
-    
-    uppercase = (uppercases / letters) * 100
-
     print()
-    print(f"Общее количество символов: {charsLen}")
-    print(f"Общее количество слов: {len(words)}")
-    print(f"Общее количество предложений: {sentences}")
-    print(f"Самое длинное слово: '{longer}' , Самое короткое: '{smaller}'.")
-    print(f"Процент заглавных букв: {int(uppercase)}%")
-    print(f"Уникальные слова: {uniqueWords}")
-    print()
-    print("="*40)
 
-TextAnalyze(input("Напишите текст который надо Проанализировать: "))
+    name, surname, math, physics = student
+
+    print(f"Имя: {name}")
+    print(f"Фамилия: {surname}")
+
+    MiddleGrade = (math + physics) / 2
+
+    if MiddleGrade > SmartStudent[0]:
+        SmartStudent[0] = MiddleGrade
+        SmartStudent[1] = name
+
+    if math >= 60 and physics >= 60:
+        print(f"Сдал(a) все предметы")
+    else:
+        print(f"Не cдал(a) все предметы")
+    
+    print(f"Средняя оценка: {MiddleGrade}")
+
+print()
+print("="*40)
+print()
+
+print(f"Студент {SmartStudent[1]}, с самым высоким средним балом '{SmartStudent[0]}'")
+
+print()
+print("="*40)
+print()
