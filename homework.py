@@ -1,160 +1,100 @@
-def total_revenue(sales):
-    result = 0
-    for data in sales:
-        result += data["price"]
-    return result
+import datetime
 
-def best_selling_product(sales):
-    result = {"price":0}
-    for data in sales:
-        if data.get("price") > result.get("price"):
-            result = data.copy()
-    result = result["product"]
-    return result
 
-def best_seller(sales):
-    result = {"price":0}
-    for data in sales:
-        if data.get("price") > result.get("price"):
-            result = data.copy()
-    result = result["seller"]
-    return result
+def save_to_file(date, mood, description):
+    with open("mood_diary.txt", "a", encoding="utf-8") as file:
+        if description == "":
+            description = "Нет"
+        file.write(f"[{date}] Настроение: {mood}\nОписание: {description}\n")
+    print("Запись сохранена!\n")
 
-def sales_by_category(sales):
-    result = {}
-    for data in sales:
-        category = data.get("category")
-        if result.get(category) == None:
-            result[category] = data.get("price") or 0
-        else:
-            result[category] += data.get("price") or 0
-    return result
+def show_weekly_stats():
+    lines = None
+    try:
+        with open("mood_diary.txt", "r", encoding="utf-8") as file:
+            lines = file.readlines()
+    except FileNotFoundError:
+        print("Файл с записями не найден.")
+        return
 
-def daily_sales(sales):
-    result = {}
-    for data in sales:
-        date = data.get("date")
-        if result.get(date) == None:
-            result[date] = data.get("price") or 0
-        else:
-            result[date] += data.get("price") or 0
-    return result
+    today = datetime.date.today()
+    one_week_ago = today - datetime.timedelta(days=7)
+    mood_scores = []
+    happiest_day = None
+    max_mood = 0
 
-def add_sale(sales, new_sale):
-    data_check = [
-        "date",
-        "product",
-        "category",
-        "price",
-        "quantity",
-        "seller",
-    ]
-
-    not_find = None
-
-    for data in data_check:
-        if new_sale.get(data) == None:
-            not_find = data
+    i = 0
+    while True:
+        if i >= len(lines):
             break
-    
-    if not_find != None:
-        print(f"Ошибка в добавлении товара! В продукте не было обнаружено параметр: '{not_find}'")
+        line = lines[i]
+        date_str = ""
+        is_mood = False
+        for char in line:
+            if char == "[":
+                is_mood = True
+            elif char == "]":
+                is_mood = False
+            else:
+                if is_mood == True:
+                    date_str = f"{date_str}{char}"
+        # print(date_str)
+        try:
+            date = datetime.datetime.strptime(date_str, "%Y-%m-%d").date()
+            
+            if date >= one_week_ago:
+                try:
+                    mood_part = line.split("Настроение: ")[1].split()[0]
+                    mood_score = int(mood_part)
+                    mood_scores.append(mood_score)
+
+                    if mood_score > max_mood:
+                        max_mood = mood_score
+                        happiest_day = date_str
+                except ValueError:
+                    pass
+        except ValueError:
+            pass
+        i += 1
+
+    if mood_scores:
+        average_mood = sum(mood_scores) / len(mood_scores)
+        print("Статистика за неделю:")
+        print(f"Среднее настроение: {average_mood}")
+        if happiest_day:
+            print(f"Самый счастливый день: {happiest_day} ({max_mood}/5)")
     else:
-        sales.append(new_sale)
-        print(f"Товар {new_sale.get("product")} успешно добавлен!")
+        print("За последнюю неделю записей нет.")
 
-    return sales
+print("=== ДНЕВНИК НАСТРОЕНИЯ ===")
 
-def split_date(date):
-    if date != None:
-        word = ""
-        for char in date:
-            if char == "-":
-                char = " "
-            word = f"{word}{char}"
-        split_date = word.split()
-        return split_date
+date = None
+mood = 1
+description = ""
 
-def calculate_date(date, start_date, end_date):
-    year,num,month = split_date(date)
-    start_year,start_num,start_month = split_date(start_date)
-    end_year,end_num,end_month = split_date(end_date)
+date_input = input("Введите дату (Enter для сегодня): ")
 
-    if start_year <= year and year <= end_year and start_num <= num and num <= end_num and start_month <= month and year <= end_month:
-        return True    
+if not date_input:
+    date = datetime.date.today().strftime("%Y-%m-%d")
+else:
+    date = date_input
 
-        
-def generate_report(sales, start_date, end_date):
-    reports = []
+while True:
+    try:
+        mood = int(input("Настроение (1-5): "))
+        if 1 <= mood and 5 >= mood:
+            break
+        else:
+            print("Пожалуйста, введите число от 1 до 5")
+    except ValueError:
+        print("Пожалуйста, введите число от 1 до 5")
 
-    print("="*40)
+description = input("Опишите день: ")
 
-    print()
-    print(f"Отчёт за период: от {start_date} до {end_date}")
-    print()
 
-    for sale in sales:
-        if calculate_date(sale.get("date"), start_date, end_date) == True:
-            reports.append(sale.get("date"))
+
+save_to_file(date, mood, description)
+
+show_weekly_stats()
+
     
-    print(f"Общая выручка: {total_revenue(sales)} руб.")
-
-    print()
-
-    print(f"Лучший товар: {best_selling_product(sales)}")
-
-    print()
-
-    print(f"Лучший продавец: {best_seller(sales)}")
-
-    print()
-
-    print(f"Выручка по категориям: {sales_by_category(sales)}")
-
-    print()
-
-    print(f"Выручка по дням: {daily_sales(sales)}")
-
-# Тестовые данные
-sales = [
-    {'date': '2024-01-01', 'product': 'Ноутбук', 'category': 'Электроника', 
-     'price': 75000, 'quantity': 2, 'seller': 'Иванов'},
-    {'date': '2024-01-02', 'product': 'Мышь', 'category': 'Электроника', 
-     'price': 1500, 'quantity': 5, 'seller': 'Петров'},
-    {'date': '2024-01-02', 'product': 'Лего', 'category': 'Игрушки', 
-     'price': 1300, 'quantity': 25, 'seller': 'Алексей'},
-    {'date': '2024-01-03', 'product': 'Планшет', 'category': 'Электроника', 
-     'price': 12000, 'quantity': 3, 'seller': 'Иванов'},
-]
-
-print(f"Общая выручка: {total_revenue(sales)} руб.")
-
-print()
-
-print(f"Лучший товар: {best_selling_product(sales)}")
-
-print()
-
-print(f"Лучший продавец: {best_seller(sales)}")
-
-print()
-
-print(f"Выручка по категориям: {sales_by_category(sales)}")
-
-print()
-
-print(f"Выручка по дням: {daily_sales(sales)}")
-
-print()
-
-sales = add_sale(sales,{'product': 'Микрофон', 'category': 'Электроника', 'price': 5000, 'quantity': 3, 'seller': 'Алексей'})
-
-print()
-
-sales = add_sale(sales,{'date': '2024-01-03', 'product': 'Клавиатура', 'category': 'Электроника', 'price': 2000, 'quantity': 1, 'seller': 'Петров'})
-
-print()
-
-generate_report(sales, "2024-01-01", "2024-01-03")
-
-
