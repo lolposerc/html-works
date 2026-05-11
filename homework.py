@@ -1,109 +1,177 @@
-import random
-import time
-
-stats = []
-
-def show_statistics():
-    gamecount = 0
-    for stat in stats:
-        print("-"*40)
-        print(f"Игра: {len(stats) - (len(stats)-gamecount) + 1}")
-        gamecount += 1
-        print(f'    Очки за игру: {stat["score"]}')
-        print(f'    Время за игру: {stat["time"]}')
-        print(f'    Попыток за игру: {stat["attempts"]}')
-        print("-"*40)
-
-def generate_hint(secret, guess):
-    if secret == guess:
-        print("="*40)
-        print()
-        print("Вы угадали число!")
-
-        return True
-
-    value = abs(secret - guess)
-
-    if value <= 5:
-        print("Горячо!")
-    elif value <= 15:
-        print("Тепло")
-    else:
-        print("Холодно")
+class Movie:
+    def set_rating(self,rating):
+        if not (1 <= rating <= 10):
+            return
+        self.rating = rating
     
-    if secret < guess:
-        print("Загаданное число: Меньше")
-    else:
-        print("Загаданное число: Больше")
-
-    return False
-
-def save_stats(score,gameTime,attempts):
-    data = {
-        "score": score,
-        "time": gameTime,
-        "attempts": attempts
-    }
-    stats.append(data)
-
-def calculate_score(attempts, gameTime):
-    score = 100 - attempts * 10
-    currentTime = time.time()
-    newTime = 10 - (currentTime - gameTime)
-    print()
-    print(f"Очков за количество попыток: {score}")
-    print()
-
-    if newTime >= 0:
-        print(f"+ Очков за быстрое время: {int(newTime)}")
-        print()
-        score += int(newTime)
-
-    if score <= 0:
-        score = 0
+    def is_high_rated(self):
+        if self.rating >= 8:
+            return True
+        else:
+            return False
     
-    print(f"Всего очков: {score}")
-    print()
-    print("="*40)
+    def __init__(self, title, director, year, genre):
+        if not (1888 <= year <= 2024):
+            return
+        self.title = title
+        self.director = director
+        self.year = year
+        self.genre = genre
+        self.rating = None
+    
+    def __str__(self):
+        string = ""
+        title = self.title
+        year = self.year
+        director = self.director
+        genre = self.genre
+        rating = self.rating
 
-    save_stats(score,int(newTime),attempts)
-def play_game():
-    secretNumber = random.randint(1,100)
-    startGameTimer = time.time()
-    attempts = 0
 
-    print(secretNumber)
+        return f"Название: {title}, {year} - {director} [{genre}] {rating}★"
 
-    while True:
+class MovieCollection:
+    def add_movie(self,movie):
+        self.movies.append(movie)
+
+    def remove_movie(self,title):
+        index = 0
+        for movie in self.movies:
+            if movie.title == title:
+                return self.movies.pop(index)
+            index += 1
+        print(f"Не получилось найти фильм с названием: {title}")
+
+    def get_movie_by_title(self, title):
+        genre_list = []
+        for movie in self.movies:
+            if movie.title == title:
+                genre_list.append(movie)
+        return genre_list
+
+    def rate_movie(self, title, rating):
+        for movie in self.movies:
+            if movie.title == title:
+                movie.set_rating(rating)
+                return
+
+    def get_top_movies(self, limit=5):
+        top_list = self.movies.copy()
+        top_list_sorted = {}
+        top_list_return = []
+
+        for name in top_list:
+            rating = name.rating
+            if rating != None:
+                if top_list_sorted.get(str(rating)) == None:
+                    top_list_sorted[str(rating)] = []
+
+                top_list_sorted[str(rating)].append(name)
         
-        try:
-            guess = int(input("Введите число от 1-100: "))
-            attempts += 1
+        limit_index = 1
 
-            hint = generate_hint(secretNumber, guess)
-
-            if hint == True:
-                calculate_score(attempts, startGameTimer)
+        for index in range(0,10):
+            if limit_index <= 5:
+                limit_index += 1
+            else:
                 break
-        except ValueError :
-            print("Пожалуйста введите число.")
+            index = 10 - index
+            if top_list_sorted.get(str(index)) != None:
+                for movie in top_list_sorted.get(str(index)):
+                    top_list_return.append(movie)
 
-while True:
-    try:
-        print("Игра: 'УГАДАЙ ЧИСЛО!'")
-        print("    1. играть")
-        print("    2. статистика")
-        choice = int(input("Выберите вариант: "))
-        print()
-        if choice < 1 or choice > 2:
-            print(f"Не существует варианта: {choice}")
-            print("Попробуйте снова.")
-            print()
-        elif choice == 1:
-            play_game()
-        elif choice == 2:
-            show_statistics()
-    except ValueError:
-        print()
-        print("Ошибка при вводе варианта. Попробуйте снова.")
-        print()
+        return top_list_return
+
+    def get_movies_by_genre(self, genre):
+        genre_list = []
+        for movie in self.movies:
+            if movie.genre == genre:
+                genre_list.append(movie)
+        return genre_list
+        
+
+    def get_stats(self):
+        total_movies = 0
+        rated_movies = 0
+        average_rating = None
+        most_common_genre = ""
+        high_rated_count = 0
+
+        genre_list = {}
+
+        for movie in self.movies:
+            total_movies += 1
+            if movie.rating != None:
+                rated_movies += 1
+
+                if average_rating == None:
+                    average_rating = movie.rating
+                else:
+                    average_rating = (average_rating + movie.rating) / 2
+
+                if genre_list.get(movie.genre) == None:
+                    genre_list[movie.genre] = 1
+                else:
+                    genre_list[movie.genre] += 1
+                
+                if movie.is_high_rated() == True:
+                    high_rated_count += 1
+        
+        most_common_genre_count = 0
+        for genre in genre_list:
+            data = genre_list[genre]
+            if most_common_genre_count > data:
+                most_common_genre_count = data
+                most_common_genre = genre
+        
+        stats = {
+            "total_movies": total_movies,
+            "rated_movies": rated_movies,
+            "average_rating": average_rating,
+            "most_common_genre": most_common_genre,
+            "high_rated_count": high_rated_count
+        }
+
+        return stats
+
+    def __init__(self,name):
+        self.name = name
+        self.movies = []
+
+    def __str__(self):
+        pass
+
+
+# Создаем коллекцию
+my_collection = MovieCollection("Мои любимые фильмы")
+
+film1 = Movie("Начало", "Кристофер Нолан", 2010, "фантастика")
+film2 = Movie("Крестный отец", "Фрэнсис Форд Коппола", 1972, "драма")
+
+# Добавляем в коллекцию
+my_collection.add_movie(film1)
+my_collection.add_movie(film2)
+
+# Оцениваем фильмы
+my_collection.rate_movie("Начало", 9)
+my_collection.rate_movie("Крестный отец", 10)
+
+
+# Получаем статистику
+stats = my_collection.get_stats()
+print(f"Всего фильмов: {stats['total_movies']}")
+print(f"Средний рейтинг: {stats['average_rating']}")
+
+# Ищем фильмы по жанру
+fantasy_movies = my_collection.get_movies_by_genre("фантастика")
+
+# Топ лист
+
+top_movies = my_collection.get_top_movies()
+
+limit_index = 0
+for movie in top_movies:
+    limit_index += 1
+    print("="*40)
+    print(f"Топ: {limit_index}, {movie.__str__()}")
+    print("="*40)
